@@ -2,7 +2,7 @@
 .data
 alive: .asciiz "X"
 dead: .asciiz "_"
-end: .asciiz "\n"
+over: .asciiz "\n"
 
 .text
   .globl simulate_automaton, print_tape
@@ -39,41 +39,40 @@ simulate_automaton:
 #   Print:  
 #       __X_X_X_
 print_tape:
-  addiu $sp $sp -4 #saving $ra
-  sw $ra 0($sp)
+ 
+  lw $t0 4($a0) #load tape
+  lb $t1 8($a0) #load tape_len
   
-  lw $t0 4($a0) #loading  tape
-  lb $t2 8($a0) #tape_len
-  li $t3 0 #loopCounter
+  li $t2 0 #loop counter
   
   loop:
-  andi $t1 $t0 1 #getting the lsb
-  srl $t0 $t0 1 #1 shift right
+  beq $t1 $t2 end #if tape_len and loop number equal
+  subi $t5 $t1 1 #estimate the length to be shifted
+  sub $t6 $t5 $t2 #for correct shift number
+  srlv $t7 $t0 $t6 #shifting
+  andi $t8 $t7 1 #getting the bit
   
-  bne $t1 $zero printAlive #conditions
-  b printDead
+  check:
+  beq $t8 $zero deadcell 
   
-  printAlive:
+  alivecell: #print X
   la $a0 alive
   li $v0 4
   syscall
-  j continue
+  b continue
   
-  printDead:
+  deadcell: #print _
   la $a0 dead
   li $v0 4
   syscall
-  																																																		
-  continue:
-  addiu $t3 $t3 1 #increasing the loop counter
-  bne $t3 $t2 loop #checking if we are done or not with all bits
   
-  programEnd:
-  la $a0 end
+  continue:
+  addiu $t2 $t2 1 #increase the loop counter
+  j loop
+  
+  end: #print \n
+  la $a0 over
   li $v0 4
   syscall
-  
-  lw $ra 0($sp) #restoring $ra
-  addiu $sp $sp 4 
   
   jr $ra
