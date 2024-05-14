@@ -46,20 +46,20 @@ lend:
   add $s1, $s1, $t0  #go to left end by adding the length
  
 neighbor:
-  srlv $t5 $t1 $s1  #right neighbor
-  andi $t5 $t5 1
-
-  srlv $t6 $t1 $t3 #current cell
+  srlv $t6 $t1 $s1  #right neighbor
   andi $t6 $t6 1
+
+  srlv $t5 $t1 $t3 #current cell
+  andi $t5 $t5 1
 
   srlv $t7 $t1 $s0        
   andi $t7 $t7 1	#left neighbor
 
 adding:
   sll $t7 $t7 2  #left shift the left neighbor
-  sll $t6 $t6 1	#left shift current cell as well
-  or $t7 $t7 $t6  #combine left and current cell
-  or $t7 $t7 $t5  #combine right cell as well
+  sll $t5 $t5 1	#left shift current cell as well
+  or $t7 $t7 $t5  #combine left and current cell
+  or $t7 $t7 $t6  #combine right cell as well
 
   srlv $t7 $t2 $t7  #extract the corresponding bit from the rule
   andi $t7 $t7 1
