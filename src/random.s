@@ -24,7 +24,7 @@ gen_byte:
   add $sp $sp -4  #allocating 4 byte
   sw  $ra 0($sp) #storing $ra
   li $t0 2 #loads the value 2 to compare
-  
+ 
   gen_two_num:
   jal gen_bit #calling gen_bit for the first value
   move $t1 $v0 #moves the value of $v0 t0 $t1
@@ -55,8 +55,46 @@ gen_byte:
 #  Put the computed bit into $v0
 #
 gen_bit:
-  li $v0 41 #generate random number
-  li $a0 0
-  syscall
-  andi $v0 $a0 1 #stores the least bit value
+  addiu $sp $sp -4
+  sw $ra 0($sp)
+  
+  lw $t1 0($a0) #load eca
+  lb $t2 10($a0) #load skip
+  lb $t3 11($a0) #load column
+  li $t4 0 #loopcounter
+  lw $t5 4($a0) #tape
+  lb $t6 8($a0) #tape_length
+  
+  beqz $t1 exone #if eca is zero
+  
+  loop:
+  beq $t2 $t4 column
+  jal simulate_automaton
+  
+  lw $t1 0($a0) #load eca
+  lb $t2 10($a0) #load skip
+  lb $t3 11($a0) #load column
+  lw $t5 4($a0) #tape
+  lb $t6 8($a0) #tape_length
+  addiu $t4 $t4 1
+  j loop
+  
+  column:
+  lw $a1 4($a0) #tape
+  subu $t6 $t6 $t3
+  subi $t6 $t6 1
+  srlv $t5 $a1 $t6
+  andi $t5 $t5 1
+  
+ j end 
+ 
+ exone:
+ li $v0 41 #generate random number
+ li $a0 0
+ syscall
+ andi $v0 $a0 1 #stores the least bit value
+  
+ end:
+  lw $ra 0($sp)
+  addi $sp $sp 4
   jr $ra

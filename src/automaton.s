@@ -21,15 +21,15 @@ over: .asciiz "\n"
 
 simulate_automaton:
   subi $sp $sp 12  #allocate space on stack
-  sw $ra 0($sp)    #store $ra
-  sw $s1 4($sp)    #store $s1
-  sw $s0 8($sp)    #store $s0
+  sw $ra 0($sp)            	#store $ra
+  sw $s1 4($sp)            	#store $s1
+  sw $s0 8($sp)           	#store $s0
   
   lw $t1 4($a0)  #load tape
   lb $t0 8($a0)  #load tape length
   lb $t2 9($a0)  #load rule
-  li $t3 0       #loop counter
-  li $t4 0       #place for new tape
+  li $t3 0        #loop counter
+  li $t4 0                 	#place for new tape
 
 tloop:
   add $s1 $t3 -1  #index of right neighbor 
@@ -46,20 +46,20 @@ lend:
   add $s1, $s1, $t0  #go to left end by adding the length
  
 neighbor:
-  srlv $t6 $t1 $s1  #right neighbor
-  andi $t6 $t6 1
-
-  srlv $t5 $t1 $t3 #current cell
+  srlv $t5 $t1 $s1  #right neighbor
   andi $t5 $t5 1
+
+  srlv $t6 $t1 $t3 #current cell
+  andi $t6 $t6 1
 
   srlv $t7 $t1 $s0        
   andi $t7 $t7 1	#left neighbor
 
 adding:
   sll $t7 $t7 2  #left shift the left neighbor
-  sll $t5 $t5 1	#left shift current cell as well
-  or $t7 $t7 $t5  #combine left and current cell
-  or $t7 $t7 $t6  #combine right cell as well
+  sll $t6 $t6 1	#left shift current cell as well
+  or $t7 $t7 $t6  #combine left and current cell
+  or $t7 $t7 $t5  #combine right cell as well
 
   srlv $t7 $t2 $t7  #extract the corresponding bit from the rule
   andi $t7 $t7 1
