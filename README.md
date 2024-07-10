@@ -18,16 +18,6 @@ How to Run
 Prerequisites
 
     MARS (MIPS Assembler and Runtime Simulator)
-
-Steps
-
-    Clone the Repository:
-
-    sh
-
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
-
 Open MARS:
 
     Place the Mars4_5.jar file into the root directory of your project.
